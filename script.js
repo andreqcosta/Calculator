@@ -9,26 +9,39 @@ function getButtonValue(e){
 	clear();
     }else if(mode === "dot"){
 	putDot();
+    }else if(mode === "delete"){
+	display.textContent = deleteNumber();
+    }else if(mode === "porc"){
+	display.textContent = operatePorc();
     }
-    
+    console.table = [operandOne, operandTwo, operator, display.textContent];
+    console.log(operandOne);
 }
 
 function getNumber(number){
     if(operator === ""){
 	if(operandOne.length < 9){
-	    if(operandOne === "0" || operandOne === "" && number === "0"){
+	    if(operandOne === "" && number === "0"){
 		return "0";
 	    }else{
-		operandOne += number;
+		if(operandOne === "0"){
+		    operandOne = number;
+		}else{
+		    operandOne += number;
+		}
 	    }
 	}	
 	return operandOne;
     }else{	
 	if(operandTwo.length < 9){
-	    if(operandTwo === "0" || operandTwo === "" && number === "0"){
+	    if(operandTwo === "" && number === "0"){
 		return "0";
 	    }else{
-		operandTwo += number;
+		if(operandTwo === "0"){
+		    operandTwo = number;
+		}else{
+		    operandTwo += number;
+		}
 	    }
 	}	
 	return operandTwo;	
@@ -41,6 +54,9 @@ function getFunc(func){
 	operandTwo = "";
 	operator = "";
     }else if(func === "+" || func === "-" || func === "*" || func === "/"){
+	if(operandTwo !== ""){
+	    getFunc("=");
+	}
 	operator = func;
     }else if(func === "root"){
 	if(operator === ""){
@@ -49,9 +65,8 @@ function getFunc(func){
 	    operandTwo = Math.sqrt(operandTwo);
 	    return operandTwo;
 	}
-    }else if(func === "back"){
-	return deleteNumber();
     }
+    operandOne = operandOne.toString()
     return operandOne;
 }
 
@@ -67,8 +82,17 @@ function operate(){
     }
 }
 
+function operatePorc(){
+    if(operandTwo !== ""){
+	operandTwo = divs(+operandTwo, 100);
+	operandTwo = mult(+operandOne, +operandTwo);
+	return getFunc("=");
+    }
+    return operandOne;
+}
+
 function clear(){
-    operandOne = "";
+    operandOne = "0";
     operandTwo = "";
     operator = "";
     display.textContent = "0";
@@ -99,6 +123,9 @@ function deleteNumber(){
 	
     }else{
 	operandTwo = operandTwo.slice(0, -1);
+	if(operandTwo === ""){
+	    return "0";
+	}
 	return operandTwo;
     }
 }
