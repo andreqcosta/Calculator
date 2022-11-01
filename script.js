@@ -1,141 +1,106 @@
-// const numbers = document.querySelectorAll(".num");
-// numbers.forEach(number => number.addEventListener('click', showNumber));
-
-// const zeroNumber = document.querySelector(".zero");
-// zeroNumber.addEventListener('click', showZero);
-
-// const operatorFunc = document.querySelectorAll(".func");
-// operatorFunc.forEach(func => func.addEventListener('click', showOperator));
-
-// const dotFunc = document.querySelector(".dot");
-// dotFunc.addEventListener("click", putDot);
-
-// const onClear = document.querySelector(".on");
-// onClear.addEventListener('click', clear);
-
-
-
-
-
-// function showNumber(e){
-//     console.log(result);
-//     if (operator === "" || result !== ""){
-// 	if(operandOne.length < 9){
-// 	    operandOne += this.classList.item(2);
-// 	    display.textContent = operandOne;
-// 	}
-//     }else{
-// 	if(operandTwo.length < 9){
-// 	    operandTwo+= this.classList.item(2);
-// 	    display.textContent = operandTwo;
-// 	}
-//     }    
-// }
-
-// function showZero(e){
-//     if(operandOne.length >= 1){
-// 	if(operandOne.length < 9){
-// 	    operandOne += this.classList.item(2);
-// 	    display.textContent = operandOne;
-// 	}
-//     }
-
-//     if(operandTwo.length >= 1){
-// 	if(operandTwo.length < 9){
-// 	    operandTwo += this.classList.item(2);
-// 	    display.textContent = operandTwo;
-// 	}
-//     }
-// }
-
-// function showOperator(e){
-//     let op = this.classList.item(2);
-//     if(op === "=" && operandTwo !== ""){
-// 	operate();
-//     }else if(op === "+" || op === "-" ||  op === "*" ||  op === "/"){
-// 	if(operandOne !== "" && operandTwo === ""){
-// 	    operator = op;
-// 	}else if(operandOne !== "" && operandTwo !== ""){
-// 	    operate();
-// 	    operator = op;
-// 	}
-//     }else if(op === "root"){
-// 	if(operandOne !== "" && operator === ""){
-// 	    operandOne = Math.sqrt(operandOne);
-// 	}
-//     }
-// }
-
-// function putDot(e){
-//     if(operandOne === ""){
-// 	operandOne += "0.";
-// 	display.textContent = operandOne;
-//     }	
-//     if(operandOne.length >= 1  && !operandOne.includes(".") && operator === ""){
-// 	operandOne += ".";
-// 	display.textContent = operandOne;
-//     }
-//     if(operandTwo === ""){
-// 	operandTwo += "0.";
-// 	display.textContent = operandTwo;
-//     }
-//     if(operandTwo.length >= 1  && !operandTwo.includes(".") && operator !== ""){
-// 	operandTwo += ".";
-// 	display.textContent = operandTwo;
-//     }
-// }
-
-// function clear(e){
-//     operandOne = "";
-//     operandTwo = "";
-//     operator = "";
-//     display.textContent = "";
-// }
-
-
-
-// function operate(){
-//     if(operator === "+"){
-// 	result = add(+operandOne, +operandTwo);
-//     }else if(operator === "-"){
-// 	result = sub(+operandOne, +operandTwo);
-//     }else if(operator === "*"){
-// 	result = mult(+operandOne, +operandTwo);
-//     }else if(operator === "/"){
-// 	result = divs(+operandOne, +operandTwo);
-//     }
-//     display.textContent = result;
-//     operandOne = result;
-//     operator = "";
-//     operandTwo = "";
-//     console.log(result);
-    
-// }
 function getButtonValue(e){
     let mode = this.classList.item(1);
     let value = this.classList.item(2);
     if(mode === "num"){
-	display.textContent += getNumber(value);
+	display.textContent = getNumber(value);
     }else if(mode === "func"){
-	getFunc(value);
+	display.textContent = getFunc(value);
+    }else if(mode === "on"){
+	clear();
+    }else if(mode === "dot"){
+	putDot();
     }
+    
 }
 
 function getNumber(number){
-    let text = display.textContent;
-    if(number === "0" && text === "0"){
-	return "";
-    }else if(text === "0"){
-	display.textContent = "";
-	return number;
+    if(operator === ""){
+	if(operandOne.length < 9){
+	    if(operandOne === "0" || operandOne === "" && number === "0"){
+		return "0";
+	    }else{
+		operandOne += number;
+	    }
+	}	
+	return operandOne;
+    }else{	
+	if(operandTwo.length < 9){
+	    if(operandTwo === "0" || operandTwo === "" && number === "0"){
+		return "0";
+	    }else{
+		operandTwo += number;
+	    }
+	}	
+	return operandTwo;	
     }
-    return number;
 }
 
 function getFunc(func){
+    if(func === "=" && operandTwo !== ""){
+	operandOne = operate();
+	operandTwo = "";
+	operator = "";
+    }else if(func === "+" || func === "-" || func === "*" || func === "/"){
+	operator = func;
+    }else if(func === "root"){
+	if(operator === ""){
+	    operandOne = Math.sqrt(operandOne);
+	}else{
+	    operandTwo = Math.sqrt(operandTwo);
+	    return operandTwo;
+	}
+    }else if(func === "back"){
+	return deleteNumber();
+    }
+    return operandOne;
+}
 
-    
-    return func;
+function operate(){
+    if(operator === "+"){
+	return add(+operandOne, +operandTwo);
+    }else if(operator === "-"){
+	return sub(+operandOne, +operandTwo);
+    }else if(operator === "*"){
+	return mult(+operandOne, +operandTwo);
+    }else if(operator === "/"){
+	return divs(+operandOne, +operandTwo);
+    }
+}
+
+function clear(){
+    operandOne = "";
+    operandTwo = "";
+    operator = "";
+    display.textContent = "0";
+}
+
+
+function putDot(){
+    if(operator === ""){
+	if(!operandOne.includes(".")){
+	    operandOne += ".";
+	    display.textContent =  operandOne;
+	}
+    }else{
+	if(!operandTwo.includes(".")){
+	    operandTwo += ".";
+	    display.textContent =  operandTwo;
+	}
+    }
+}
+
+function deleteNumber(){
+    if(operator === ""){
+	operandOne = operandOne.slice(0, -1);
+	if(operandOne === ""){
+	    return "0";
+	}
+	return operandOne;
+	
+    }else{
+	operandTwo = operandTwo.slice(0, -1);
+	return operandTwo;
+    }
 }
 
 const buttons = document.querySelectorAll(".column");
@@ -147,7 +112,6 @@ display.textContent = "0";
 let operandOne = "";
 let operandTwo = "";
 let operator = "";
-let result = "";
 
 function add(a, b){
     return a + b;
